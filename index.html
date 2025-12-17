@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Berita & Kegiatan Siswa - SMP Negeri 6 Kota Gorontalo</title>
+    
+    <!-- Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons: Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            DEFAULT: '#001BB7', // Warna utama sesuai request
+                            50: '#EEF2FF',
+                            100: '#E0E7FF',
+                            200: '#C7D2FE',
+                            300: '#A5B4FC',
+                            400: '#818CF8',
+                            500: '#6366F1',
+                            600: '#001BB7', // Base Primary
+                            700: '#001592',
+                            800: '#001070',
+                            900: '#000C50',
+                        },
+                        accent: {
+                            light: '#F3F4F6', // Soft Gray
+                            blue: '#DBEAFE',  // Soft Blue
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'fade-up': 'fadeUp 0.8s ease-out forwards',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        fadeUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Grid Pattern */
+        .bg-grid-pattern {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+        }
+        .dark .bg-grid-pattern {
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+        }
+
+        /* Hide Scrollbar for category scroll on mobile */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Smooth reveal class */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300 antialiased overflow-x-hidden">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 transition-all duration-300" id="navbar">
+        <div class="absolute inset-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800"></div>
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shadow-primary-600/30">
+                        <span class="text-xl">6</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-sm font-bold leading-none text-slate-900 dark:text-white uppercase tracking-wider">SMP Negeri 6</span>
+                           <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Kota Gorontalo</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8 font-medium text-sm">
+                    <a href="#beranda" class="text-primary-600 dark:text-primary-400">Beranda</a>
+                    <a href="#kategori" class="text-slate-600 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition">Kategori</a>
+                    <a href="#berita" class="text-slate-600 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition">Berita</a>
+                    <a href="#ekstrakurikuler" class="text-slate-600 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition">Ekstrakurikuler</a>
+                    <a href="#kontributor" class="text-slate-600 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition">Kontributor</a>
+                </div>
+
+                <!-- Right Actions -->
+                <div class="flex items-center gap-4">
+                    <!-- Dark Mode Toggle -->
+                    <button id="theme-toggle" class="p-2 rounded-full text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                        <i data-lucide="moon" class="w-5 h-5 dark:hidden"></i>
+                        <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+                    </button>
+                    
+                    <!-- Mobile Menu Button -->
+                    <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-600 dark:text-slate-300">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar Mobile -->
+    <div id="sidebar" class="fixed inset-y-0 right-0 w-64 bg-white dark:bg-slate-900 shadow-2xl transform translate-x-full transition-transform duration-300 z-50 flex flex-col pt-24 px-6 gap-6 md:hidden">
+        <a href="#beranda" class="text-lg font-medium text-primary-600 dark:text-primary-400 sidebar-link">Beranda</a>
+        <a href="#kategori" class="text-lg font-medium text-slate-700 dark:text-slate-300 sidebar-link">Kategori</a>
+        <a href="#berita" class="text-lg font-medium text-slate-700 dark:text-slate-300 sidebar-link">Berita Terbaru</a>
+        <a href="#ekstrakurikuler" class="text-lg font-medium text-slate-700 dark:text-slate-300 sidebar-link">Ekstrakurikuler</a>
+        <a href="#kontributor" class="text-lg font-medium text-slate-700 dark:text-slate-300 sidebar-link">Kontributor</a>
+        <button id="close-sidebar" class="absolute top-6 right-6 p-2 text-slate-500">
+            <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+    </div>
+    <!-- Overlay -->
+    <div id="overlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden glass"></div>
+
+    <!-- Hero Section -->
+    <section id="beranda" class="relative pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden">
+        <!-- Background Elements -->
+        <div class="absolute inset-0 bg-grid-pattern -z-20"></div>
+        <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-primary-600/20 rounded-full blur-3xl -z-10 animate-float"></div>
+        <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-72 h-72 bg-blue-400/20 rounded-full blur-3xl -z-10 animate-float" style="animation-delay: 2s;"></div>
+
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Text Content -->
+                <div class="text-center lg:text-left reveal active">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 text-sm font-semibold mb-6 border border-primary-100 dark:border-primary-800">
+                        <span class="relative flex h-2 w-2">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
+                        </span>
+                        Portal Informasi Resmi Sekolah
+                    </div>
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 tracking-tight text-slate-900 dark:text-white">
+                        Wadah Kreativitas & <span class="text-primary-600 dark:text-primary-400">Prestasi Siswa</span>
+                    </h1>
+                    <p class="text-lg text-slate-600 dark:text-slate-400 mb-8 leading-relaxed max-w-xl mx-auto lg:mx-0">
+                        Jelajahi berbagai kegiatan, prestasi, dan berita terbaru dari lingkungan belajar SMP Negeri 6 Kota Gorontalo yang aktif, inspiratif, dan terpercaya.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                        <a href="#berita" class="px-8 py-4 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-semibold transition-all shadow-lg shadow-primary-600/30 hover:shadow-primary-600/50 flex items-center justify-center gap-2">
+                            Lihat Berita Terbaru
+                            <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                        </a>
+                        <a href="#kategori" class="px-8 py-4 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold hover:bg-slate-50 dark:hover:bg-slate-700 transition flex items-center justify-center gap-2">
+                            <i data-lucide="grid" class="w-5 h-5"></i>
+                            Kategori Kegiatan
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Hero Image/Illustration -->
+                <div class="relative lg:h-[500px] flex items-center justify-center reveal delay-200">
+                    <div class="relative w-full max-w-lg aspect-square">
+                        <!-- Decorative Blob SVG behind image -->
+                        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="absolute inset-0 w-full h-full text-primary-100 dark:text-primary-900/30 transform scale-110">
+                            <path fill="currentColor" d="M44.7,-76.4C58.9,-69.2,71.8,-59.1,79.6,-46.3C87.4,-33.5,90.1,-18,87.9,-3.3C85.7,11.4,78.6,25.3,69.5,37.3C60.4,49.3,49.3,59.4,36.8,66.1C24.3,72.8,10.4,76.1,-2.6,80.6C-15.6,85.1,-27.7,90.8,-38.7,86.2C-49.7,81.6,-59.6,66.7,-68.6,52.2C-77.6,37.7,-85.7,23.6,-85.5,9.6C-85.3,-4.4,-76.8,-18.3,-66.9,-29.9C-57,-41.5,-45.7,-50.8,-33.6,-59C-21.5,-67.2,-8.6,-74.3,5.1,-83.1C18.8,-91.9,37.6,-102.4,44.7,-76.4Z" transform="translate(100 100)" />
+                        </svg>
+                        
+                        <!-- Main Image -->
+                        <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Siswa Belajar" class="relative z-10 w-full h-full object-cover rounded-3xl shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500 border-4 border-white dark:border-slate-800">
+                        
+                        <!-- Floating Card Badge -->
+                        <div class="absolute -bottom-6 -left-6 z-20 bg-white dark:bg-slate-800 p-4 rounded-xl shadow-xl border border-slate-100 dark:border-slate-700 flex items-center gap-4 animate-float" style="animation-delay: 1s;">
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600">
+                                <i data-lucide="trophy" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-500">Prestasi Terbaru</p>
+                                <p class="font-bold text-slate-800 dark:text-white">Juara 1 Lomba Sains</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Kategori Section -->
+    <section id="kategori" class="py-16 bg-slate-50 dark:bg-slate-800/50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12 reveal">
+                <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-3">Jelajahi Kegiatan</h2>
+                <div class="w-16 h-1.5 bg-primary-600 mx-auto rounded-full"></div>
+            </div>
+            
+            <div class="flex flex-wrap justify-center gap-4 reveal">
+                <!-- Category Buttons -->
+                <button class="cat-btn active group bg-white dark:bg-slate-700 border border-primary-600 text-primary-600 dark:text-primary-400 px-6 py-3 rounded-full hover:bg-primary-600 hover:text-white transition-all shadow-sm flex items-center gap-2">
+                    <i data-lucide="layers" class="w-4 h-4"></i> Semua
+                </button>
+                <button class="cat-btn group bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 px-6 py-3 rounded-full hover:bg-primary-600 hover:border-primary-600 hover:text-white transition-all shadow-sm flex items-center gap-2">
+                    <i data-lucide="book-open" class="w-4 h-4"></i> Akademik
+                </button>
+                <button class="cat-btn group bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 px-6 py-3 rounded-full hover:bg-primary-600 hover:border-primary-600 hover:text-white transition-all shadow-sm flex items-center gap-2">
+                    <i data-lucide="music" class="w-4 h-4"></i> Ekstrakurikuler
+                </button>
+                <button class="cat-btn group bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 px-6 py-3 rounded-full hover:bg-primary-600 hover:border-primary-600 hover:text-white transition-all shadow-sm flex items-center gap-2">
+                    <i data-lucide="medal" class="w-4 h-4"></i> Prestasi
+                </button>
+                <button class="cat-btn group bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 px-6 py-3 rounded-full hover:bg-primary-600 hover:border-primary-600 hover:text-white transition-all shadow-sm flex items-center gap-2">
+                    <i data-lucide="calendar" class="w-4 h-4"></i> Sekolah
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Highlight / Featured Section -->
+    <section class="py-20">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-primary-600 rounded-3xl overflow-hidden shadow-2xl text-white reveal">
+                <div class="grid lg:grid-cols-2">
+                    <div class="relative h-64 lg:h-auto overflow-hidden group">
+                        <img src="https://images.unsplash.com/photo-1544531586-fde5298cdd40?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Upacara" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700">
+                        <div class="absolute top-4 left-4 bg-yellow-500 text-slate-900 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                            Highlight
+                        </div>
+                    </div>
+                    <div class="p-8 lg:p-12 flex flex-col justify-center">
+                        <div class="flex items-center gap-3 text-primary-100 text-sm mb-4">
+                            <i data-lucide="calendar-days" class="w-4 h-4"></i>
+                            <span>15 Desember 2024</span>
+                            <span>•</span>
+                            <span>Kesiswaan</span>
+                        </div>
+                        <h3 class="text-3xl font-bold mb-4 leading-tight">Peringatan Hari Guru Nasional di SMPN 6 Kota Gorontalo Berlangsung Meriah</h3>
+                        <p class="text-primary-100 mb-8 line-clamp-3">
+                            Seluruh siswa dan dewan guru SMP Negeri 6 Kota Gorontalo melaksanakan upacara bendera yang dirangkaikan dengan pemberian penghargaan kepada guru teladan. Suasana haru dan bangga menyelimuti...
+                        </p>
+                        <a href="#" class="inline-flex items-center gap-2 text-white font-semibold hover:gap-4 transition-all">
+                            Baca Selengkapnya <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Berita Terbaru Grid (Grid Layout) -->
+    <section id="berita" class="py-16 bg-white dark:bg-slate-900">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-end justify-between mb-10 reveal">
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">Berita Terbaru</h2>
+                    <p class="text-slate-500 dark:text-slate-400">Update terkini dari civitas akademika</p>
+                </div>
+                <a href="#" class="hidden md:flex items-center gap-2 text-primary-600 dark:text-primary-400 font-medium hover:underline">
+                    Lihat Semua <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Card 1 -->
+                <article class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-700 overflow-hidden hover:shadow-xl transition-all duration-300 group reveal">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1577896335477-2858759b4815?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="News" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute top-3 left-3 bg-white dark:bg-slate-900 text-primary-600 dark:text-primary-400 text-xs font-bold px-2 py-1 rounded shadow-sm">
+                            Akademik
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-center text-xs text-slate-400 mb-3 gap-2">
+                            <i data-lucide="clock" class="w-3 h-3"></i> 2 Hari yang lalu
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2 line-clamp-2 group-hover:text-primary-600 transition-colors">
+                            Siswa Kelas 9 Ikuti Try Out Berbasis Komputer
+                        </h3>
+                        <p class="text-slate-500 text-sm mb-4 line-clamp-2">
+                            Persiapan menghadapi ujian akhir sekolah terus dilakukan dengan simulasi intensif.
+                        </p>
+                        <a href="#" class="text-sm font-semibold text-primary-600 flex items-center gap-1 group-hover:gap-2 transition-all">
+                            Baca <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+                </article>
+
+                <!-- Card 2 -->
+                <article class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-700 overflow-hidden hover:shadow-xl transition-all duration-300 group reveal delay-100">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="News" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute top-3 left-3 bg-white dark:bg-slate-900 text-primary-600 dark:text-primary-400 text-xs font-bold px-2 py-1 rounded shadow-sm">
+                            Ekstrakurikuler
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-center text-xs text-slate-400 mb-3 gap-2">
+                            <i data-lucide="clock" class="w-3 h-3"></i> 3 Hari yang lalu
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2 line-clamp-2 group-hover:text-primary-600 transition-colors">
+                            Tim Futsal Raih Juara 2 Tingkat Kota
+                        </h3>
+                        <p class="text-slate-500 text-sm mb-4 line-clamp-2">
+                            Pertandingan sengit di final membawa tim sekolah kita meraih posisi runner-up.
+                        </p>
+                        <a href="#" class="text-sm font-semibold text-primary-600 flex items-center gap-1 group-hover:gap-2 transition-all">
+                            Baca <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+                </article>
+
+                <!-- Card 3 -->
+                <article class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-700 overflow-hidden hover:shadow-xl transition-all duration-300 group reveal delay-200">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1531545514256-b1400bc00f31?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="News" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute top-3 left-3 bg-white dark:bg-slate-900 text-primary-600 dark:text-primary-400 text-xs font-bold px-2 py-1 rounded shadow-sm">
+                            Sosial
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-center text-xs text-slate-400 mb-3 gap-2">
+                            <i data-lucide="clock" class="w-3 h-3"></i> 5 Hari yang lalu
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2 line-clamp-2 group-hover:text-primary-600 transition-colors">
+                            Bakti Sosial OSIS: Berbagi Sembako
+                        </h3>
+                        <p class="text-slate-500 text-sm mb-4 line-clamp-2">
+                            OSIS SMPN 6 menyalurkan bantuan kepada warga sekitar sekolah yang membutuhkan.
+                        </p>
+                        <a href="#" class="text-sm font-semibold text-primary-600 flex items-center gap-1 group-hover:gap-2 transition-all">
+                            Baca <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+                </article>
+
+                <!-- Card 4 -->
+                <article class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-700 overflow-hidden hover:shadow-xl transition-all duration-300 group reveal delay-300">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1543269865-cbf427effbad?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="News" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute top-3 left-3 bg-white dark:bg-slate-900 text-primary-600 dark:text-primary-400 text-xs font-bold px-2 py-1 rounded shadow-sm">
+                            Pengumuman
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex items-center text-xs text-slate-400 mb-3 gap-2">
+                            <i data-lucide="clock" class="w-3 h-3"></i> 1 Minggu yang lalu
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2 line-clamp-2 group-hover:text-primary-600 transition-colors">
+                            Jadwal Libur Semester Genap 2024
+                        </h3>
+                        <p class="text-slate-500 text-sm mb-4 line-clamp-2">
+                            Informasi lengkap mengenai jadwal pembagian rapot dan libur sekolah.
+                        </p>
+                        <a href="#" class="text-sm font-semibold text-primary-600 flex items-center gap-1 group-hover:gap-2 transition-all">
+                            Baca <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+                </article>
+            </div>
+            
+            <div class="mt-8 text-center md:hidden">
+                <a href="#" class="inline-block px-6 py-3 border border-primary-600 text-primary-600 rounded-xl font-medium hover:bg-primary-600 hover:text-white transition">Lihat Semua Berita</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Menggantikan Section Galeri -->
+    <section id="ekstrakurikuler" class="py-16 bg-slate-50 dark:bg-slate-800/50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between mb-10 reveal">
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">Kegiatan Ekstrakurikuler</h2>
+                    <p class="text-slate-500 dark:text-slate-400">Liputan kegiatan ekstrakurikuler</p>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Artikel Item 1 -->
+                <article class="flex gap-4 md:gap-6 items-start bg-white dark:bg-slate-800 p-4 md:p-6 rounded-2xl shadow-sm hover:shadow-md transition-all border border-slate-100 dark:border-slate-700 reveal">
+                    <!-- Image Left -->
+                    <div class="flex-shrink-0 w-24 h-24 md:w-32 md:h-32 rounded-xl overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Kegiatan 1" class="w-full h-full object-cover">
+                    </div>
+                    <!-- Content Right -->
+                    <div class="flex-grow">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-[10px] md:text-xs font-bold uppercase tracking-wider text-primary-600 bg-primary-50 dark:bg-primary-900/30 dark:text-primary-300 px-2 py-1 rounded-md">Lomba</span>
+                            <span class="text-[10px] md:text-xs text-slate-400">14 Des 2024</span>
+                        </div>
+                        <h3 class="text-base md:text-lg font-bold text-slate-900 dark:text-white leading-tight mb-2 hover:text-primary-600 transition-colors">
+                            <a href="#">Persiapan Matang Tim Pramuka Menuju Jambore Daerah</a>
+                        </h3>
+                        <p class="hidden md:block text-sm text-slate-500 dark:text-slate-400 mb-3 line-clamp-2">
+                            Latihan intensif dilakukan setiap sore sepulang sekolah untuk memastikan kesiapan fisik dan mental.
+                        </p>
+                        <div class="flex items-center gap-2 mt-auto">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Author" class="w-6 h-6 rounded-full">
+                            <span class="text-xs font-medium text-slate-600 dark:text-slate-300">Rizky (9A)</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Artikel Item 2 -->
+                <article class="flex gap-4 md:gap-6 items-start bg-white dark:bg-slate-800 p-4 md:p-6 rounded-2xl shadow-sm hover:shadow-md transition-all border border-slate-100 dark:border-slate-700 reveal delay-100">
+                    <div class="flex-shrink-0 w-24 h-24 md:w-32 md:h-32 rounded-xl overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1516062423079-7ca13cdc7f5a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Kegiatan 2" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-grow">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-[10px] md:text-xs font-bold uppercase tracking-wider text-green-600 bg-green-50 dark:bg-green-900/30 dark:text-green-300 px-2 py-1 rounded-md">Literasi</span>
+                            <span class="text-[10px] md:text-xs text-slate-400">12 Des 2024</span>
+                        </div>
+                        <h3 class="text-base md:text-lg font-bold text-slate-900 dark:text-white leading-tight mb-2 hover:text-primary-600 transition-colors">
+                            <a href="#">Pojok Baca Baru di Perpustakaan Sekolah</a>
+                        </h3>
+                        <p class="hidden md:block text-sm text-slate-500 dark:text-slate-400 mb-3 line-clamp-2">
+                            Kini siswa lebih nyaman membaca dengan fasilitas bean bag dan koleksi novel terbaru.
+                        </p>
+                        <div class="flex items-center gap-2 mt-auto">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Author" class="w-6 h-6 rounded-full">
+                            <span class="text-xs font-medium text-slate-600 dark:text-slate-300">Alya (8C)</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Artikel Item 3 -->
+                <article class="flex gap-4 md:gap-6 items-start bg-white dark:bg-slate-800 p-4 md:p-6 rounded-2xl shadow-sm hover:shadow-md transition-all border border-slate-100 dark:border-slate-700 reveal delay-200">
+                    <div class="flex-shrink-0 w-24 h-24 md:w-32 md:h-32 rounded-xl overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1564981797816-1043664bf78d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Kegiatan 3" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-grow">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-[10px] md:text-xs font-bold uppercase tracking-wider text-purple-600 bg-purple-50 dark:bg-purple-900/30 dark:text-purple-300 px-2 py-1 rounded-md">Seni</span>
+                            <span class="text-[10px] md:text-xs text-slate-400">10 Des 2024</span>
+                        </div>
+                        <h3 class="text-base md:text-lg font-bold text-slate-900 dark:text-white leading-tight mb-2 hover:text-primary-600 transition-colors">
+                            <a href="#">Pameran Lukisan Karya Siswa Kelas 7</a>
+                        </h3>
+                        <p class="hidden md:block text-sm text-slate-500 dark:text-slate-400 mb-3 line-clamp-2">
+                            Beragam tema lukisan dipamerkan di aula sekolah sebagai tugas akhir semester mata pelajaran Seni Budaya.
+                        </p>
+                        <div class="flex items-center gap-2 mt-auto">
+                            <img src="https://randomuser.me/api/portraits/men/86.jpg" alt="Author" class="w-6 h-6 rounded-full">
+                            <span class="text-xs font-medium text-slate-600 dark:text-slate-300">Dimas (7B)</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Artikel Item 4 -->
+                <article class="flex gap-4 md:gap-6 items-start bg-white dark:bg-slate-800 p-4 md:p-6 rounded-2xl shadow-sm hover:shadow-md transition-all border border-slate-100 dark:border-slate-700 reveal delay-300">
+                    <div class="flex-shrink-0 w-24 h-24 md:w-32 md:h-32 rounded-xl overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1511895426328-dc8714191300?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Kegiatan 4" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-grow">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-[10px] md:text-xs font-bold uppercase tracking-wider text-yellow-600 bg-yellow-50 dark:bg-yellow-900/30 dark:text-yellow-300 px-2 py-1 rounded-md">Rohis</span>
+                            <span class="text-[10px] md:text-xs text-slate-400">08 Des 2024</span>
+                        </div>
+                        <h3 class="text-base md:text-lg font-bold text-slate-900 dark:text-white leading-tight mb-2 hover:text-primary-600 transition-colors">
+                            <a href="#">Kajian Rutin Jumat Pagi: Membangun Karakter Islami</a>
+                        </h3>
+                        <p class="hidden md:block text-sm text-slate-500 dark:text-slate-400 mb-3 line-clamp-2">
+                            Kegiatan ini bertujuan untuk mempererat tali silaturahmi dan meningkatkan keimanan siswa.
+                        </p>
+                        <div class="flex items-center gap-2 mt-auto">
+                            <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Author" class="w-6 h-6 rounded-full">
+                            <span class="text-xs font-medium text-slate-600 dark:text-slate-300">Nadia (9D)</span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            
+            <div class="mt-10 text-center">
+                <a href="#" class="inline-flex items-center gap-2 text-primary-600 dark:text-primary-400 font-semibold hover:gap-3 transition-all">
+                    Lihat semua <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW SECTION: Kontributor Siswa (Card Akun) -->
+    <!-- Menggantikan Section Testimonial -->
+    <section id="kontributor" class="py-16 bg-white dark:bg-slate-900">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center text-slate-900 dark:text-white mb-2 reveal">Kontributor Aktif</h2>
+            <p class="text-center text-slate-500 dark:text-slate-400 mb-12 reveal">Siswa berbakat yang aktif berbagi informasi kegiatan sekolah</p>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <!-- User Card 1 -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-lg transition-all text-center group reveal">
+                    <div class="relative w-20 h-20 mx-auto mb-4">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Rizky" class="w-full h-full rounded-full object-cover border-4 border-primary-50 dark:border-slate-700 group-hover:border-primary-100 transition-colors">
+                        <div class="absolute bottom-0 right-0 bg-blue-500 w-6 h-6 rounded-full flex items-center justify-center border-2 border-white dark:border-slate-800 text-white">
+                            <i data-lucide="check" class="w-3 h-3"></i>
+                        </div>
+                    </div>
+                    <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-1">Rizky Aditya</h3>
+                    <p class="text-primary-600 dark:text-primary-400 text-sm font-medium mb-3">Ketua Jurnalistik</p>
+                    <div class="flex justify-center gap-4 text-slate-400 text-xs py-3 border-t border-slate-100 dark:border-slate-700">
+                        <div class="flex flex-col">
+                            <span class="font-bold text-slate-800 dark:text-slate-200 text-sm">12</span>
+                            <span>Artikel</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-bold text-slate-800 dark:text-slate-200 text-sm">9A</span>
+                            <span>Kelas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Card 2 -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-lg transition-all text-center group reveal delay-100">
+                    <div class="relative w-20 h-20 mx-auto mb-4">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Alya" class="w-full h-full rounded-full object-cover border-4 border-primary-50 dark:border-slate-700 group-hover:border-primary-100 transition-colors">
+                    </div>
+                    <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-1">Alya Putri</h3>
+                    <p class="text-primary-600 dark:text-primary-400 text-sm font-medium mb-3">Fotografer</p>
+                    <div class="flex justify-center gap-4 text-slate-400 text-xs py-3 border-t border-slate-100 dark:border-slate-700">
+                        <div class="flex flex-col">
+                            <span class="font-bold text-slate-800 dark:text-slate-200 text-sm">8</span>
+                            <span>Artikel</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-bold text-slate-800 dark:text-slate-200 text-sm">8C</span>
+                            <span>Kelas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Card 3 -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-lg transition-all text-center group reveal delay-200">
+                    <div class="relative w-20 h-20 mx-auto mb-4">
+                        <img src="https://randomuser.me/api/portraits/men/86.jpg" alt="Dimas" class="w-full h-full rounded-full object-cover border-4 border-primary-50 dark:border-slate-700 group-hover:border-primary-100 transition-colors">
+                    </div>
+                    <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-1">Dimas Anggara</h3>
+                    <p class="text-primary-600 dark:text-primary-400 text-sm font-medium mb-3">Reporter Seni</p>
+                    <div class="flex justify-center gap-4 text-slate-400 text-xs py-3 border-t border-slate-100 dark:border-slate-700">
+                        <div class="flex flex-col">
+                            <span class="font-bold text-slate-800 dark:text-slate-200 text-sm">5</span>
+                            <span>Artikel</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-bold text-slate-800 dark:text-slate-200 text-sm">7B</span>
+                            <span>Kelas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Card 4 -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-lg transition-all text-center group reveal delay-300">
+                    <div class="relative w-20 h-20 mx-auto mb-4">
+                        <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Nadia" class="w-full h-full rounded-full object-cover border-4 border-primary-50 dark:border-slate-700 group-hover:border-primary-100 transition-colors">
+                        <div class="absolute bottom-0 right-0 bg-blue-500 w-6 h-6 rounded-full flex items-center justify-center border-2 border-white dark:border-slate-800 text-white">
+                            <i data-lucide="check" class="w-3 h-3"></i>
+                        </div>
+                    </div>
+                    <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-1">Nadia Safira</h3>
+                    <p class="text-primary-600 dark:text-primary-400 text-sm font-medium mb-3">Redaktur</p>
+                    <div class="flex justify-center gap-4 text-slate-400 text-xs py-3 border-t border-slate-100 dark:border-slate-700">
+                        <div class="flex flex-col">
+                            <span class="font-bold text-slate-800 dark:text-slate-200 text-sm">15</span>
+                            <span>Artikel</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-bold text-slate-800 dark:text-slate-200 text-sm">9D</span>
+                            <span>Kelas</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="kontak" class="bg-slate-900 text-slate-300 pt-20 pb-8 rounded-t-[3rem] mt-10">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+                <!-- Brand -->
+                <div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center text-white font-bold">6</div>
+                        <span class="text-white font-bold text-lg">SMP Negeri 6<br><span class="text-sm font-normal text-slate-400">Kota Gorontalo</span></span>
+                    </div>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                        Membangun generasi cerdas, berkarakter, dan berprestasi di era digital dengan landasan iman dan takwa.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center hover:bg-primary-600 transition"><i data-lucide="facebook" class="w-4 h-4"></i></a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center hover:bg-primary-600 transition"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center hover:bg-primary-600 transition"><i data-lucide="youtube" class="w-4 h-4"></i></a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="text-white font-bold mb-6">Navigasi Cepat</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="#" class="hover:text-primary-400 transition">Profil Sekolah</a></li>
+                        <li><a href="#" class="hover:text-primary-400 transition">Guru & Staff</a></li>
+                        <li><a href="#" class="hover:text-primary-400 transition">Agenda Kegiatan</a></li>
+                        <li><a href="#" class="hover:text-primary-400 transition">PPDB Online</a></li>
+                        <li><a href="#" class="hover:text-primary-400 transition">E-Learning</a></li>
+                    </ul>
+                </div>
+
+                <!-- Kontak -->
+                <div>
+                    <h4 class="text-white font-bold mb-6">Hubungi Kami</h4>
+                    <ul class="space-y-4 text-sm">
+                        <li class="flex items-start gap-3">
+                            <i data-lucide="map-pin" class="w-5 h-5 text-primary-500 mt-0.5"></i>
+                            <span>Jl. Ternate No. 12, Kota Gorontalo, Gorontalo 96115</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i data-lucide="phone" class="w-5 h-5 text-primary-500"></i>
+                            <span>(0435) 821xxx</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i data-lucide="mail" class="w-5 h-5 text-primary-500"></i>
+                            <span>info@smpn6gorontalo.sch.id</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Jam Ops -->
+                <div>
+                    <h4 class="text-white font-bold mb-6">Jam Operasional</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex justify-between">
+                            <span>Senin - Kamis</span>
+                            <span class="text-white">07:00 - 14:00</span>
+                        </li>
+                        <li class="flex justify-between">
+                            <span>Jumat</span>
+                            <span class="text-white">07:00 - 11:30</span>
+                        </li>
+                        <li class="flex justify-between">
+                            <span>Sabtu</span>
+                            <span class="text-white">07:00 - 13:00</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-slate-800 pt-8 text-center text-sm text-slate-500">
+                <p>&copy; 2025   SMP Negeri 6 Kota Gorontalo. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // Dark Mode Logic
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        
+        // Check local storage
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            if (html.classList.contains('dark')) {
+                localStorage.theme = 'dark';
+            } else {
+                localStorage.theme = 'light';
+            }
+        });
+
+        // Mobile Menu Logic
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const closeBtn = document.getElementById('close-sidebar');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+
+        mobileBtn.addEventListener('click', toggleSidebar);
+        closeBtn.addEventListener('click', toggleSidebar);
+        overlay.addEventListener('click', toggleSidebar);
+        
+        // Close sidebar on link click
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', toggleSidebar);
+        });
+
+        // Navbar Scroll Effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) {
+                navbar.classList.add('shadow-md');
+                navbar.querySelector('.absolute').classList.add('bg-white/90', 'dark:bg-slate-900/90');
+                navbar.querySelector('.absolute').classList.remove('bg-white/0', 'dark:bg-slate-900/0');
+            } else {
+                navbar.classList.remove('shadow-md');
+                navbar.querySelector('.absolute').classList.remove('bg-white/90', 'dark:bg-slate-900/90');
+                navbar.querySelector('.absolute').classList.add('bg-white/0', 'dark:bg-slate-900/0');
+            }
+        });
+
+        // Category Filter Mock Logic
+        const catBtns = document.querySelectorAll('.cat-btn');
+        catBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active class from all
+                catBtns.forEach(b => {
+                    b.classList.remove('bg-primary-600', 'text-white', 'border-primary-600');
+                    b.classList.add('bg-white', 'dark:bg-slate-700', 'text-slate-600', 'dark:text-slate-300', 'border-slate-200');
+                });
+                // Add active class to clicked
+                this.classList.remove('bg-white', 'dark:bg-slate-700', 'text-slate-600', 'dark:text-slate-300', 'border-slate-200');
+                this.classList.add('bg-primary-600', 'text-white', 'border-primary-600');
+            });
+        });
+
+        // Scroll Reveal Animation
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 150;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        // Trigger once on load
+        reveal();
+    </script>
+</body>
+</html>
